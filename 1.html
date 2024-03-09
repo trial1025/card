@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>多選下拉選單</title>
+  <style>
+    .dropdown {
+      display: inline-block;
+      position: relative;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      padding: 12px 16px;
+      z-index: 1;
+    }
+
+    .dropdown-content label {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .dropdown-content label:last-child {
+      margin-bottom: 0;
+    }
+
+    .dropdown-content input {
+      margin-right: 8px;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <form>
+    <div class="dropdown">
+      <input type="text" id="ip">
+      <div class="dropdown-content">
+        <label><input type="checkbox" value="選項1"> 選項 1</label>
+        <label><input type="checkbox" value="選項2"> 選項 2</label>
+        <label><input type="checkbox" value="選項3"> 選項 3</label>
+        <label><input type="checkbox" value="選項4"> 選項 4</label>
+        <label><input type="checkbox" value="選項5"> 選項 5</label>
+      </div>
+    </div>
+    <button type="submit">送出</button>
+  </form>
+
+  <script>
+    document.querySelector('.dropdown-content').addEventListener('click', function (e) {
+      if (e.target.tagName === 'INPUT') {
+        let ip = document.querySelector('#ip')
+        let values = Array.from(this.querySelectorAll('input:checked')).map(el => el.value)
+        ip.value = values.join(',')
+      }
+    })
+
+    document.querySelector('form').addEventListener('submit', function (e) {
+      e.preventDefault()
+      alert(document.querySelector('#ip').value)
+
+      document.querySelector('#ip').value = ''
+
+      let checkboxes = document.querySelectorAll('.dropdown-content input:checked')
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = false
+      })
+    })
+  </script>
+</body>
+
+</html>

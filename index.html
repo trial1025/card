@@ -10,22 +10,53 @@
       background-repeat: no-repeat;
       background-position: center;
       background-size: cover;
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
     }
-    #game{
-      width: 90%;
-      height: 550px;
+    .gameplace{
+      width: 80%;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+      /* background-color: aqua; */
+    }
+    #game {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      width: 100%;
       border: 1px solid black;
-      margin: auto;
     }
     .card {
+      flex: 1 0 calc(100% / 6);
       width: 140px;
       height: 220px;
       position: relative;
       float: left;
-      margin: 10px;
+      margin-top: 5px;
       /* 設定子元素在 3D 空間內 */
       transform-style: preserve-3d;
       transition: transform 1s;
+    }
+    
+    /* 平板版樣式 */
+    @media screen and (max-width: 1024px) {
+      .card {
+        width: 100px;
+        height: 160px;
+      }
+    }
+
+    /* 手機版樣式 */
+    @media screen and (max-width: 768px) {
+      .card {
+        width: 80px;
+        height: 120px;
+      }
     }
     .card-front {
       width: 100%;
@@ -53,30 +84,37 @@
       transform: rotateY(180deg);
     }
 
-    .hp{
+    /* point */
+    .point{
+      width: 80%;
+      height: 60px;
+      /* background: rgb(238, 135, 135); */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .point .hp{
       border: 1px solid black;
-      width: 60%;
+      width: 80%;
       height: 40px;
       margin: auto;
-      margin-bottom: 10px;
       background: white;
       display: flex;
-      flex-direction: row-reverse;
+      flex-direction: row;
+      border-radius: 90px;
+      overflow: hidden;
     }
-    .blood{
+    .point .blood{
       width: 10%;
       height: 100%;
       background: red;
       border-right: 1px solid #000;
     }
 
-    p{
-      position: absolute;
-      /* margin-left:40%; */
+    .point p{
       font-weight: bolder;
       font-size: 25px;
-      left: 5%;
-      top: -3%;
       background: lightgrey;
     }
 
@@ -85,7 +123,7 @@
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js' integrity='sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==' crossorigin='anonymous'></script>
 </head>
 <body>
-  <div>
+  <div class="point">
     <p>你的文化素養:</p>
     <div class="hp">
       <div class="blood"></div>
@@ -100,7 +138,10 @@
       <div class="blood"></div>
     </div>
   </div>
-  <div id="game"></div>
+  <div class="gameplace">
+    <div id="game"></div>
+  </div>
+
   <script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="./jquery.imgexplode.min.js "></script>
   <script>
@@ -152,47 +193,34 @@
           $('.card:not(.card-close)').eq(0).attr('data-number') ===
           $('.card:not(.card-close)').eq(1).attr('data-number')
           ) {
-          $('.hp .blood:First').fadeTo(1000, 0)
-          $('.card:not(.card-close)').addClass('card-ok')
-          // $('.card:not(.card-close)').fadeTo(1000, 0)
-          $('.card:not(.card-close)').addClass('.boom')
-        }
-
-        setTimeout(function () {
-          // 翻回來
-          $('.card:not(.card-close)').addClass('card-close')
+            $('.card:not(.card-close)').addClass('card-ok')
+            $('.card:not(.card-close)').fadeTo(1000, 0)
+            $('.card:not(.card-close)').addClass('.boom')
+          } else {
+            // 如果兩張不一樣
+            // 扣血
+            $('.hp .blood:First').fadeTo(1000, 0,function(){
+              $(this).remove();
+            })
+          }
+          
+          setTimeout(function () {
+            // 翻回來
+            $('.card:not(.card-close)').addClass('card-close')
           // 過關判斷
           if ( $('.card-ok').length === $('.card').length ) {
             alert('過關')
+            location.reload();
+          } else {
+            // 遊戲結束
+            if ( $('.hp .blood:First').length === 0 ) {
+              alert('素養過低，遊戲結束');
+              location.reload();
+            }
           }
-        }, 1000)
+        }, 500)
       }
     })
-
-    // 爆炸
-    var $target = $(".boom");
-
-        function explode() {
-            $target.explodeRestore();
-            setTimeout(function () {
-                $target.explode({
-                    maxWidth: 15,
-                    minWidth: 5,
-                    radius: 231,
-                    release: false,
-                    recycle: false,
-                    explodeTime: 320,
-                    canvas: true,
-                    round: false,
-                    maxAngle: 360,
-                    gravity: 10,
-                    groundDistance: 150,
-                });
-            }, 300)
-        }
-        explode();
-
-    
   </script>
 </body>
 </html>
